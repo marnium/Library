@@ -14,14 +14,14 @@ import java.sql.*;
 public class UserUpdate extends JPanel {
     private static final long serialVersionUID = 1L;
     private final String str_user[] = {"Dar de Baja", "Dar de Alta"};
-    private SearchUser search;
-    private Access access;
-    private JTable table;
+    private final SearchUser search;
+    private final Access access;
+    private final JTable table;
     private InputGroup group_update;
-    private ImageIcon images[];
-    private JLabel show_update;
-    private JButton jbutton_update;
-    private JButton button_baja_alta;
+    private final ImageIcon images[];
+    private final JLabel show_update;
+    private final JButton jbutton_update;
+    private final JButton button_baja_alta;
     private int id_user;
     private int id_data;
     private int type_user;
@@ -133,98 +133,90 @@ public class UserUpdate extends JPanel {
                 show_update.setForeground(Color.BLACK);
             }
         });
-        jbutton_update.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String str[] = new String[group_update.inputs.length - 1];
-                for (int i = 0; i < str.length; i++) {
-                    str[i] = group_update.inputs[i+1].field.getText();
-                }
-                if (1 == access.update_data(str) &&
-                    1 == access.update_user(group_update.inputs[0].field.getText())) {
-                    id_user = 0;
-                    id_data = 0;
-                    for (int i = 0; i < group_update.inputs.length; i++)
-                        group_update.inputs[i].field.setText("");
-                    group_update.setVisible(false);
-                    jbutton_update.setVisible(false);
-                    button_baja_alta.setVisible(false);
-                    show_update.setIcon(images[0]);
-                    show_update.setText("Mostrar");
-                    JOptionPane.showMessageDialog(UserUpdate.this, "Actualizado", "Estado",
-                        JOptionPane.INFORMATION_MESSAGE);
-                } else
-                    JOptionPane.showMessageDialog(UserUpdate.this, "No se pudo actualizar", "Error", 
-                        JOptionPane.ERROR_MESSAGE);
+        jbutton_update.addActionListener((ActionEvent e) -> {
+            String str[] = new String[group_update.inputs.length - 1];
+            for (int i = 0; i < str.length; i++) {
+                str[i] = group_update.inputs[i+1].field.getText();
             }
+            if (1 == access.update_data(str) &&
+                    1 == access.update_user(group_update.inputs[0].field.getText())) {
+                id_user = 0;
+                id_data = 0;
+                for (int i = 0; i < group_update.inputs.length; i++)
+                    group_update.inputs[i].field.setText("");
+                group_update.setVisible(false);
+                jbutton_update.setVisible(false);
+                button_baja_alta.setVisible(false);
+                show_update.setIcon(images[0]);
+                show_update.setText("Mostrar");
+                JOptionPane.showMessageDialog(UserUpdate.this, "Actualizado", "Estado",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } else
+                JOptionPane.showMessageDialog(UserUpdate.this, "No se pudo actualizar", "Error", 
+                        JOptionPane.ERROR_MESSAGE);
         });
-        button_baja_alta.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                if (access.has_book_toreturn()) {
-                    JOptionPane.showMessageDialog(UserUpdate.this,
+        button_baja_alta.addActionListener((ActionEvent event) -> {
+            if (access.has_book_toreturn()) {
+                JOptionPane.showMessageDialog(UserUpdate.this,
                         "No se puede dar de baja a este Usuario\nTiene Libros por devolver", 
                         "Estado", JOptionPane.WARNING_MESSAGE);
-                } else if (1 == access.alta_baja_user()) {
-                    id_user = 0;
-                    id_data = 0;
-                    for (int i = 0; i < group_update.inputs.length; i++)
-                        group_update.inputs[i].field.setText("");
-                    group_update.setVisible(false);
-                    jbutton_update.setVisible(false);
-                    button_baja_alta.setVisible(false);
-                    show_update.setIcon(images[0]);
-                    show_update.setText("Mostrar");
-                    JOptionPane.showMessageDialog(UserUpdate.this, "Hecho", "Estado",
+            } else if (1 == access.alta_baja_user()) {
+                id_user = 0;
+                id_data = 0;
+                for (int i = 0; i < group_update.inputs.length; i++)
+                    group_update.inputs[i].field.setText("");
+                group_update.setVisible(false);
+                jbutton_update.setVisible(false);
+                button_baja_alta.setVisible(false);
+                show_update.setIcon(images[0]);
+                show_update.setText("Mostrar");
+                JOptionPane.showMessageDialog(UserUpdate.this, "Hecho", "Estado",
                         JOptionPane.INFORMATION_MESSAGE);
-                } else
-                    JOptionPane.showMessageDialog(UserUpdate.this, "No se Pudo " + str_user[user_altabaja], "Error", 
+            } else
+                JOptionPane.showMessageDialog(UserUpdate.this, "No se Pudo " + str_user[user_altabaja], "Error", 
                         JOptionPane.ERROR_MESSAGE);
-            }
         });
-        table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-            @Override
-            public void valueChanged(ListSelectionEvent event) {
-                if (table.getSelectedRow() < 0) {
-                    id_user = 0;
-                    for (int i = 0; i < group_update.inputs.length; i++)
-                        group_update.inputs[i].field.setText("");
-                    group_update.setVisible(false);
-                    jbutton_update.setVisible(false);
-                    button_baja_alta.setVisible(false);
-                    show_update.setIcon(images[0]);
-                    show_update.setText("Mostrar");
-                } else if (!event.getValueIsAdjusting()) {
-                    int row = table.getSelectedRow();
-                    int length = group_update.inputs.length;
-                    int offset;
-                    javax.swing.table.TableModel model = table.getModel();
-                    int row_model = table.convertRowIndexToModel(row);
-                    user_altabaja = Integer.parseInt(model.getValueAt(row_model, 9).toString());
-                    user_altabaja = (user_altabaja == 0 ? 1 : 0);
-                    if (table.getColumnCount() == length) {
-                        offset = 0;
-                        type_user = 0;
-                        id_user = Integer.parseInt(model.getValueAt(row_model, length).toString());
-                        id_data = Integer.parseInt(model.getValueAt(row_model, length + 1).toString());
-                    } else {
-                        offset = 1;
-                        type_user = 1;
-                        id_user = Integer.parseInt(model.getValueAt(row_model, length + 1).toString());
-                        id_data = Integer.parseInt(model.getValueAt(row_model, 0).toString());
-                    }
-                    System.out.println("id_usuario: " + id_user);
-                    System.out.println("id_data: " + id_data);
-                    System.out.println("type_user: "+user_altabaja);
-                    for (int i = 0; i < length; i++)
-                        group_update.inputs[i].field.setText(table.getValueAt(row, i + offset).toString());
-                    group_update.setVisible(true);
-                    jbutton_update.setVisible(true);
-                    button_baja_alta.setText(str_user[user_altabaja]);
-                    button_baja_alta.setVisible(true);
-                    show_update.setIcon(images[1]);
-                    show_update.setText("Ocultar");
+        table.getSelectionModel().addListSelectionListener((ListSelectionEvent event) -> {
+            if (table.getSelectedRow() < 0) {
+                id_user = 0;
+                for (Input input : group_update.inputs) {
+                    input.field.setText("");
                 }
+                group_update.setVisible(false);
+                jbutton_update.setVisible(false);
+                button_baja_alta.setVisible(false);
+                show_update.setIcon(images[0]);
+                show_update.setText("Mostrar");
+            } else if (!event.getValueIsAdjusting()) {
+                int row = table.getSelectedRow();
+                int length = group_update.inputs.length;
+                int offset;
+                javax.swing.table.TableModel model = table.getModel();
+                int row_model = table.convertRowIndexToModel(row);
+                user_altabaja = Integer.parseInt(model.getValueAt(row_model, 9).toString());
+                user_altabaja = (user_altabaja == 0 ? 1 : 0);
+                if (table.getColumnCount() == length) {
+                    offset = 0;
+                    type_user = 0;
+                    id_user = Integer.parseInt(model.getValueAt(row_model, length).toString());
+                    id_data = Integer.parseInt(model.getValueAt(row_model, length + 1).toString());
+                } else {
+                    offset = 1;
+                    type_user = 1;
+                    id_user = Integer.parseInt(model.getValueAt(row_model, length + 1).toString());
+                    id_data = Integer.parseInt(model.getValueAt(row_model, 0).toString());
+                }
+                System.out.println("id_usuario: " + id_user);
+                System.out.println("id_data: " + id_data);
+                System.out.println("type_user: "+user_altabaja);
+                for (int i = 0; i < length; i++)
+                    group_update.inputs[i].field.setText(table.getValueAt(row, i + offset).toString());
+                group_update.setVisible(true);
+                jbutton_update.setVisible(true);
+                button_baja_alta.setText(str_user[user_altabaja]);
+                button_baja_alta.setVisible(true);
+                show_update.setIcon(images[1]);
+                show_update.setText("Ocultar");
             }
         });
     }

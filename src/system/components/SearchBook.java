@@ -58,11 +58,11 @@ public class SearchBook extends JPanel {
         inputs[1] = new InputText(null, name_options[2], 20, 50);
         inputs[2] = new InputText(null, name_options[3], 20, 60);
         DocumentListener listenerinp = new ChangeSearch();
-        for (int i = 0; i < inputs.length; i++) {
-            inputs[i].field.getDocument().addDocumentListener(listenerinp);
-            inputs[i].setVisible(false);
-            hgroupinp.addComponent(inputs[i]);
-            vgroupinp.addComponent(inputs[i]);
+        for (Input input : inputs) {
+            input.field.getDocument().addDocumentListener(listenerinp);
+            input.setVisible(false);
+            hgroupinp.addComponent(input);
+            vgroupinp.addComponent(input);
         }
 
         table = new MyTable(new MyTable.MyTableModel(name_columns));
@@ -73,15 +73,12 @@ public class SearchBook extends JPanel {
         GroupLayout.ParallelGroup hgroup = layout.createParallelGroup();
         GroupLayout.SequentialGroup vgroup = layout.createSequentialGroup();
         if (create_typebooks) {
-            type_books = new JComboBox<String>(new String[]
+            type_books = new JComboBox<>(new String[]
             {"Libros dados de baja", "Libros activos"});
             type_books.setSelectedIndex(1);
-            type_books.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent event) {
-                    if (event.getStateChange() == ItemEvent.SELECTED)
-                        access.type_book = type_books.getSelectedIndex();
-                }
+            type_books.addItemListener((ItemEvent event) -> {
+                if (event.getStateChange() == ItemEvent.SELECTED)
+                    access.type_book = type_books.getSelectedIndex();
             });
             hgroup.addComponent(type_books);
             vgroup.addComponent(type_books, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE);
@@ -101,29 +98,23 @@ public class SearchBook extends JPanel {
         );
 
         //Manejadores de eventos
-        radio_options[0].addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent event) {
-                if (event.getStateChange() == ItemEvent.SELECTED) {
-                    can_search = false;
-                    for (int i = 0; i < inputs.length; i++) {
-                        inputs[i].setVisible(false);
-                        inputs[i].field.setText("");
-                    }
-                    button.setVisible(true);
-                } else {
-                    button.setVisible(false);
-                    can_search = true;
+        radio_options[0].addItemListener((ItemEvent event) -> {
+            if (event.getStateChange() == ItemEvent.SELECTED) {
+                can_search = false;
+                for (int i = 0; i < inputs.length; i++) {
+                    inputs[i].setVisible(false);
+                    inputs[i].field.setText("");
                 }
+                button.setVisible(true);
+            } else {
+                button.setVisible(false);
+                can_search = true;
             }
         });
         for (int i = 1; i < radio_options.length; i++)
             radio_options[i].addItemListener(new ChangeOptions(i));
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                print_table(access.select_alldata());
-            }
+        button.addActionListener((ActionEvent event) -> {
+            print_table(access.select_alldata());
         });
         
         //Analizar el valor de active_all

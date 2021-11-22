@@ -12,14 +12,14 @@ import java.sql.*;
 
 public class ReturnBook extends JPanel {
     private static final long serialVersionUID = 1L;
-    private JTable table;
-    private InputGroup group;
-    private ImageIcon images[];
-    private JLabel show_book;
-    private JButton button;
+    private final JTable table;
+    private final InputGroup group;
+    private final ImageIcon images[];
+    private final JLabel show_book;
+    private final JButton button;
     private int id_lend;
     private int id_book;
-    private Access access;
+    private final Access access;
 
     public ReturnBook(Connection connection) {
         access = new Access(connection);
@@ -36,11 +36,8 @@ public class ReturnBook extends JPanel {
         // Crear el objeto de busqueda de prestamos
         SearchLend search = new SearchLend(new SearchLend.Access(connection), 0);
         table = search.get_table();
-        search.set_search_listener(new SearchListener(){
-            @Override
-            public void no_data() {
-                JOptionPane.showMessageDialog(ReturnBook.this, "No Hay Libros Por Devolver");
-            }
+        search.set_search_listener(() -> {
+            JOptionPane.showMessageDialog(ReturnBook.this, "No Hay Libros Por Devolver");
         });
 
         // Crear las entradas donde se mostraran los datos del libro seleccionado
@@ -118,57 +115,50 @@ public class ReturnBook extends JPanel {
             }
         });
 
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (access.return_book() != 1) {
-                    JOptionPane.showMessageDialog(ReturnBook.this, "Error al devolver el libro",
+        button.addActionListener((ActionEvent e) -> {
+            if (access.return_book() != 1) {
+                JOptionPane.showMessageDialog(ReturnBook.this, "Error al devolver el libro",
                         "Error", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    for (int i = 0; i < group.inputs.length; i++)
-                        group.inputs[i].field.setText("");
-                    JOptionPane.showMessageDialog(ReturnBook.this, "Hecho: Libro Devuleto");
-                    group.setVisible(false);
-                    button.setVisible(false);
-                    show_book.setIcon(images[0]);
-                    show_book.setText("Mostrar");
-                }
+            } else {
+                for (int i = 0; i < group.inputs.length; i++)
+                    group.inputs[i].field.setText("");
+                JOptionPane.showMessageDialog(ReturnBook.this, "Hecho: Libro Devuleto");
+                group.setVisible(false);
+                button.setVisible(false);
+                show_book.setIcon(images[0]);
+                show_book.setText("Mostrar");
             }
         });
 
-        table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-        
-            @Override
-            public void valueChanged(ListSelectionEvent arg0) {
-                if (table.getSelectedRow() < 0) {
-                    id_lend = 0;
-                    id_book = 0;
-                    for (int i = 0; i < group.inputs.length; i++)
-                        group.inputs[i].field.setText("");
-                    group.setVisible(false);
-                    button.setVisible(false);
-                    show_book.setIcon(images[0]);
-                    show_book.setText("Mostrar");
-                } else {
-                    int row = table.getSelectedRow();
-                    id_lend = Integer.parseInt(table.getModel().getValueAt(table.
+        table.getSelectionModel().addListSelectionListener((ListSelectionEvent arg0) -> {
+            if (table.getSelectedRow() < 0) {
+                id_lend = 0;
+                id_book = 0;
+                for (int i = 0; i < group.inputs.length; i++)
+                    group.inputs[i].field.setText("");
+                group.setVisible(false);
+                button.setVisible(false);
+                show_book.setIcon(images[0]);
+                show_book.setText("Mostrar");
+            } else {
+                int row = table.getSelectedRow();
+                id_lend = Integer.parseInt(table.getModel().getValueAt(table.
                         convertColumnIndexToModel(row), 8).toString());
-                    id_book = Integer.parseInt(table.getValueAt(row, 5).toString());
-                    System.out.println("id_prestamo = "+id_lend);
-                    System.out.println("id_libro = "+id_book);
-                    for (int i = 0; i < group.inputs.length; i++)
-                        group.inputs[i].field.setText(table.getValueAt(row, i + 5).toString());
-                    group.setVisible(true);
-                    button.setVisible(true);
-                    show_book.setIcon(images[1]);
-                    show_book.setText("Ocultar");
-                }
+                id_book = Integer.parseInt(table.getValueAt(row, 5).toString());
+                System.out.println("id_prestamo = "+id_lend);
+                System.out.println("id_libro = "+id_book);
+                for (int i = 0; i < group.inputs.length; i++)
+                    group.inputs[i].field.setText(table.getValueAt(row, i + 5).toString());
+                group.setVisible(true);
+                button.setVisible(true);
+                show_book.setIcon(images[1]);
+                show_book.setText("Ocultar");
             }
         });
     }
 
     private class Access {
-        private Connection connection;
+        private final Connection connection;
 
         public Access(Connection connection) {
             this.connection = connection;

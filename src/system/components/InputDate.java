@@ -8,7 +8,7 @@ import javax.swing.*;
 
 public class InputDate extends Input {
     private static final long serialVersionUID = 1L;
-    private JDateChooser date;
+    private final JDateChooser date;
 
     public InputDate(String label) {
         date = new JDateChooser("dd/MM/yyyy", "##/##/####", '_');

@@ -12,9 +12,9 @@ import java.sql.*;
 
 public class Sanction extends JPanel {
     private static final long serialVersionUID = 1L;
-    private String[] columns = {"Inicio Sanción", "Fin Sanción", "Núm. Control",
+    private final String[] columns = {"Inicio Sanción", "Fin Sanción", "Núm. Control",
         "Nombre", "Apellido Paterno", "ID Libro", "Titulo", "Autor"};
-    private JRadioButton radios[];
+    private final JRadioButton radios[];
     private JTable table;
     private Access access;
     private int radio_selected = -1;
@@ -71,62 +71,58 @@ public class Sanction extends JPanel {
             .addComponent(scroll)
             .addComponent(button_print));
         
-        button_select.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                int index = 0;
-                if (radio_selected >= 0)
-                    index = 2;
-                print_table(access.selects(index, radio_selected),
+        button_select.addActionListener((ActionEvent event) -> {
+            int index = 0;
+            if (radio_selected >= 0)
+                index = 2;
+            print_table(access.selects(index, radio_selected),
                     access.selects(index + 1, radio_selected));
-            }
         });
-        button_print.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                int count_row = table.getRowCount();
-                if (count_row > 0) {
-                    JFileChooser chooser_file = new JFileChooser();
-                    int option = chooser_file.showSaveDialog(Sanction.this);
-                    if (option == JFileChooser.APPROVE_OPTION) {
-                        java.io.File path_file = chooser_file.getSelectedFile();
-                        try {
-                            Document doc = new Document(PageSize.LETTER, 57, 57, 57, 57);
-                            PdfWriter.getInstance(doc, new java.io.FileOutputStream(path_file + ".pdf"));
-                            doc.open();
-                            Paragraph prg_titulo = new Paragraph("Biblioteca del Instituto Tecnologico de Pochutla\n",
+        button_print.addActionListener((ActionEvent event) -> {
+            int count_row = table.getRowCount();
+            if (count_row > 0) {
+                JFileChooser chooser_file = new JFileChooser();
+                int option = chooser_file.showSaveDialog(Sanction.this);
+                if (option == JFileChooser.APPROVE_OPTION) {
+                    java.io.File path_file = chooser_file.getSelectedFile();
+                    try {
+                        Document doc = new Document(PageSize.LETTER, 57, 57, 57, 57);
+                        PdfWriter.getInstance(doc, new java.io.FileOutputStream(path_file + ".pdf"));
+                        doc.open();
+                        Paragraph prg_titulo = new Paragraph("Biblioteca del Instituto Tecnologico de Pochutla\n",
                                 new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD));
-                            Paragraph prg_subtitle = new Paragraph("Sanciones\n\n",
+                        Paragraph prg_subtitle = new Paragraph("Sanciones\n\n",
                                 new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD));
-                            prg_titulo.setAlignment(Element.ALIGN_CENTER);
-                            prg_subtitle.setAlignment(Element.ALIGN_CENTER);
-                            doc.add(prg_titulo);
-                            doc.add(prg_subtitle);
-                                            // id    titulo  autor  año   editor  país  ciudad  isbn   ejemp
-                            //float widths[] = { 41.6f, 67.2f, 62.2f, 41.6f, 62.2f, 57.2f, 62.2f, 62.2f, 41.6f};
-                            int count_column = table.getColumnCount();
-                            PdfPTable table_imprimir = new PdfPTable(count_column);
-                            //table_imprimir.setTotalWidth(widths);
-                            //table_imprimir.setLockedWidth(true);
-                            Font font = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD);
-                            for (int i = 0; i < count_column; ++i) {
-                                table_imprimir.addCell(new Paragraph(table.getColumnName(i), font));
-                            }
-                            font = new Font(Font.FontFamily.HELVETICA, 11, Font.NORMAL);
-                            for (int i = 0; i < count_row; ++i) {
-                                for (int j = 0; j < count_column; j++)
-                                    table_imprimir.addCell(new Paragraph(table.getValueAt(i, j).toString(), font));   
-                            }
-                            doc.add(table_imprimir);
-                            doc.close();
-                            JOptionPane.showMessageDialog(Sanction.this, "Datos Guardados Correctamente");
-                        } catch (FileNotFoundException | DocumentException e) {
-                            JOptionPane.showMessageDialog(Sanction.this, "Error al guardar los datos", "Error",
-                                JOptionPane.ERROR_MESSAGE);
+                        prg_titulo.setAlignment(Element.ALIGN_CENTER);
+                        prg_subtitle.setAlignment(Element.ALIGN_CENTER);
+                        doc.add(prg_titulo);
+                        doc.add(prg_subtitle);
+                        // id    titulo  autor  año   editor  país  ciudad  isbn   ejemp
+                        //float widths[] = { 41.6f, 67.2f, 62.2f, 41.6f, 62.2f, 57.2f, 62.2f, 62.2f, 41.6f};
+                        int count_column = table.getColumnCount();
+                        PdfPTable table_imprimir = new PdfPTable(count_column);
+                        //table_imprimir.setTotalWidth(widths);
+                        //table_imprimir.setLockedWidth(true);
+                        Font font1 = new Font(Font.FontFamily.HELVETICA, 11, Font.BOLD);
+                        for (int i = 0; i < count_column; ++i) {
+                            table_imprimir.addCell(new Paragraph(table.getColumnName(i), font1));
                         }
+                        font1 = new Font(Font.FontFamily.HELVETICA, 11, Font.NORMAL);
+                        for (int i = 0; i < count_row; ++i) {
+                            for (int j = 0; j < count_column; j++) {
+                                table_imprimir.addCell(new Paragraph(table.getValueAt(i, j).toString(), font1));
+                            }
+                        }
+                        doc.add(table_imprimir);
+                        doc.close();
+                        JOptionPane.showMessageDialog(Sanction.this, "Datos Guardados Correctamente");
+                    }catch (FileNotFoundException | DocumentException e) {
+                        JOptionPane.showMessageDialog(Sanction.this, "Error al guardar los datos", "Error",
+                                JOptionPane.ERROR_MESSAGE);
                     }
-                } else
-                    JOptionPane.showMessageDialog(Sanction.this, "No hay datos", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(Sanction.this, "No hay datos", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
     }

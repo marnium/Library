@@ -13,14 +13,14 @@ import java.sql.*;
 public class BookUpdate extends JPanel {
     private static final long serialVersionUID = 1L;
     private final String str_book[] = {"Dar de Baja", "Dar de Alta"};
-    private SearchBook searchbooks;
-    private JTable table;
+    private final SearchBook searchbooks;
+    private final JTable table;
     private InputGroup group_update;
-    private JLabel show_update;
-    private JButton jbutton_update;
-    private JButton button_baja_alta;
-    private ImageIcon images[];
-    private Access access;
+    private final JLabel show_update;
+    private final JButton jbutton_update;
+    private final JButton button_baja_alta;
+    private final ImageIcon images[];
+    private final Access access;
     private int id_book;
     private int typebook;
 
@@ -135,85 +135,78 @@ public class BookUpdate extends JPanel {
             }
         });
 
-        jbutton_update.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String str[] = new String[group_update.inputs.length];
-                for (int i = 0; i < str.length; i++)
-                    str[i] = group_update.inputs[i].field.getText();
-                if (1 == access.update_book(str, id_book)) {
-                    id_book = 0;
-                    for (int i = 0; i < group_update.inputs.length; i++)
-                        group_update.inputs[i].field.setText("");
-                    group_update.setVisible(false);
-                    jbutton_update.setVisible(false);
-                    button_baja_alta.setVisible(false);
-                    show_update.setIcon(images[0]);
-                    show_update.setText("Mostrar");
-                    JOptionPane.showMessageDialog(BookUpdate.this, "Actualizado", "Estado",
+        jbutton_update.addActionListener((ActionEvent e) -> {
+            String str[] = new String[group_update.inputs.length];
+            for (int i = 0; i < str.length; i++)
+                str[i] = group_update.inputs[i].field.getText();
+            if (1 == access.update_book(str, id_book)) {
+                id_book = 0;
+                for (Input input : group_update.inputs) {
+                    input.field.setText("");
+                }
+                group_update.setVisible(false);
+                jbutton_update.setVisible(false);
+                button_baja_alta.setVisible(false);
+                show_update.setIcon(images[0]);
+                show_update.setText("Mostrar");
+                JOptionPane.showMessageDialog(BookUpdate.this, "Actualizado", "Estado",
                         JOptionPane.INFORMATION_MESSAGE);
-                } else
-                    JOptionPane.showMessageDialog(BookUpdate.this, "No se pudo actualizar", "Error", 
+            } else
+                JOptionPane.showMessageDialog(BookUpdate.this, "No se pudo actualizar", "Error", 
                         JOptionPane.ERROR_MESSAGE);
-            }
         });
-        button_baja_alta.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                if (access.isin_lent_thisbook()) {
-                    JOptionPane.showMessageDialog(BookUpdate.this,
+        button_baja_alta.addActionListener((ActionEvent event) -> {
+            if (access.isin_lent_thisbook()) {
+                JOptionPane.showMessageDialog(BookUpdate.this,
                         "No se puede dar de baja este libro\nEsta en prestamo",
                         "Estado", JOptionPane.WARNING_MESSAGE);
-                } else if (access.baja_alta_book() == 1) {
-                    id_book = 0;
-                    for (int i = 0; i < group_update.inputs.length; i++)
-                        group_update.inputs[i].field.setText("");
-                    group_update.setVisible(false);
-                    jbutton_update.setVisible(false);
-                    button_baja_alta.setVisible(false);
-                    show_update.setIcon(images[0]);
-                    show_update.setText("Mostrar");
-                    JOptionPane.showMessageDialog(BookUpdate.this, "Hecho", "Estado",
-                        JOptionPane.INFORMATION_MESSAGE);
-                } else
-                    JOptionPane.showMessageDialog(BookUpdate.this, "No se Pudo " + str_book[typebook],
-                        "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-        table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-        
-            @Override
-            public void valueChanged(ListSelectionEvent event) {
-                if (table.getSelectedRow() < 0) {
-                    id_book = 0;
-                    for (int i = 0; i < group_update.inputs.length; i++)
-                        group_update.inputs[i].field.setText("");
-                    group_update.setVisible(false);
-                    jbutton_update.setVisible(false);
-                    button_baja_alta.setVisible(false);
-                    show_update.setIcon(images[0]);
-                    show_update.setText("Mostrar");
-                } else if (!event.getValueIsAdjusting()) {
-                    int row = table.getSelectedRow();
-                    int row_model = table.convertRowIndexToModel(row);
-                    id_book = Integer.parseInt(table.getModel().getValueAt(row_model, 0).toString());
-                    typebook = Integer.parseInt(table.getModel().getValueAt(row_model, 9).toString());
-                    typebook = (typebook == 0 ? 1 : 0);
-                    for (int i = 0; i < group_update.inputs.length; i++)
-                        group_update.inputs[i].field.setText(table.getValueAt(row, i).toString());
-                    group_update.setVisible(true);
-                    jbutton_update.setVisible(true);
-                    button_baja_alta.setText(str_book[typebook]);
-                    button_baja_alta.setVisible(true);
-                    show_update.setIcon(images[1]);
-                    show_update.setText("Ocultar");
+            } else if (access.baja_alta_book() == 1) {
+                id_book = 0;
+                for (Input input : group_update.inputs) {
+                    input.field.setText("");
                 }
+                group_update.setVisible(false);
+                jbutton_update.setVisible(false);
+                button_baja_alta.setVisible(false);
+                show_update.setIcon(images[0]);
+                show_update.setText("Mostrar");
+                JOptionPane.showMessageDialog(BookUpdate.this, "Hecho", "Estado",
+                        JOptionPane.INFORMATION_MESSAGE);
+            } else
+                JOptionPane.showMessageDialog(BookUpdate.this, "No se Pudo " + str_book[typebook],
+                        "Error", JOptionPane.ERROR_MESSAGE);
+        });
+        table.getSelectionModel().addListSelectionListener((ListSelectionEvent event) -> {
+            if (table.getSelectedRow() < 0) {
+                id_book = 0;
+                for (Input input : group_update.inputs) {
+                    input.field.setText("");
+                }
+                group_update.setVisible(false);
+                jbutton_update.setVisible(false);
+                button_baja_alta.setVisible(false);
+                show_update.setIcon(images[0]);
+                show_update.setText("Mostrar");
+            } else if (!event.getValueIsAdjusting()) {
+                int row = table.getSelectedRow();
+                int row_model = table.convertRowIndexToModel(row);
+                id_book = Integer.parseInt(table.getModel().getValueAt(row_model, 0).toString());
+                typebook = Integer.parseInt(table.getModel().getValueAt(row_model, 9).toString());
+                typebook = (typebook == 0 ? 1 : 0);
+                for (int i = 0; i < group_update.inputs.length; i++)
+                    group_update.inputs[i].field.setText(table.getValueAt(row, i).toString());
+                group_update.setVisible(true);
+                jbutton_update.setVisible(true);
+                button_baja_alta.setText(str_book[typebook]);
+                button_baja_alta.setVisible(true);
+                show_update.setIcon(images[1]);
+                show_update.setText("Ocultar");
             }
         });
     }
 
     private class Access extends SearchBook.Access {
-        private Connection connection;
+        private final Connection connection;
 
         public Access(Connection connection) {
             super(connection, "SELECT * FROM libros WHERE", "SELECT * FROM libros");

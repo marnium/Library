@@ -8,7 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class FileData {
-    private static String file_name = "ServerConf.m2a";
+    private static final String file_name = "ServerConf.m2a";
 
     public static void write(DataConnector data) throws IOException {
         ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file_name));

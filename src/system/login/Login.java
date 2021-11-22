@@ -21,7 +21,7 @@ public class Login extends javax.swing.JFrame {
     private JButton jbt_exit;
     private JButton button_in;
     private JButton button_conf;
-    private JPanel canvas;
+    private final JPanel canvas;
     private Access access;
 
     public Login() {
@@ -123,25 +123,16 @@ public class Login extends javax.swing.JFrame {
     }
 
     private void set_acctions_to_components() {
-        jbt_exit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
+        jbt_exit.addActionListener((ActionEvent e) -> {
+            System.exit(0);
         });
-        ActionListener listener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                validate_input_and_selectid();
-            }  
+        ActionListener listener = (ActionEvent event) -> {
+            validate_input_and_selectid();  
         };
         ((JPasswordField) inputs[1].field).addActionListener(listener);
         button_in.addActionListener(listener);
-        button_conf.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                new ConfigureServer(Login.this).setVisible(true);
-            }
+        button_conf.addActionListener((ActionEvent event) -> {
+            new ConfigureServer(Login.this).setVisible(true);
         });
     }
 
@@ -217,7 +208,7 @@ public class Login extends javax.swing.JFrame {
                 ResultSet r = sql_selectidlogin.executeQuery();
                 if (r.first())
                     id_login = r.getInt(1);
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
 
@@ -248,25 +239,22 @@ public class Login extends javax.swing.JFrame {
             inputs[1].field.setText("root");
             InputGroup group = new InputGroup(inputs, true, "Datos de Conexión", FontUse.sansserif_bold_16);
             JButton button_ok = new JButton("Probar Conexión");
-            button_ok.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(java.awt.event.ActionEvent event) {
-                    if (inputs[0].field.getText().isEmpty() || inputs[1].field.getText().isEmpty()
+            button_ok.addActionListener((java.awt.event.ActionEvent event) -> {
+                if (inputs[0].field.getText().isEmpty() || inputs[1].field.getText().isEmpty()
                         || inputs[2].field.getText().isEmpty()) {
-                        JOptionPane.showMessageDialog(ConfigureServer.this, "Rellena Todos los campos",
+                    JOptionPane.showMessageDialog(ConfigureServer.this, "Rellena Todos los campos",
                             "Error", JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        DataConnector data = new DataConnector(inputs[0].field.getText(),
+                } else {
+                    DataConnector data = new DataConnector(inputs[0].field.getText(),
                             inputs[1].field.getText(), inputs[2].field.getText());
-                        try {
-                            FileData.write(data);
-                            Connector.close_connection();
-                            if (createAccess() == 1)
-                                JOptionPane.showMessageDialog(ConfigureServer.this, "Conectado");
-                        } catch (IOException e) {
-                            JOptionPane.showMessageDialog(ConfigureServer.this, 
+                    try {
+                        FileData.write(data);
+                        Connector.close_connection();
+                        if (createAccess() == 1)
+                            JOptionPane.showMessageDialog(ConfigureServer.this, "Conectado");
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(ConfigureServer.this, 
                                 "Error al guardar los datos");
-                        }
                     }
                 }
             });

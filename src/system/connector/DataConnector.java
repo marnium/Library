@@ -4,9 +4,9 @@ import java.io.Serializable;
 
 public class DataConnector implements Serializable {
     private static final long serialVersionUID = -6060232507346604331L;
-    private String host;
-    private String user;
-    private String password;
+    private final String host;
+    private final String user;
+    private final String password;
 
     public DataConnector(String host, String user, String password) {
         this.host = host;

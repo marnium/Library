@@ -62,12 +62,9 @@ public class SearchUser extends JPanel {
         if (create_typeuser) {
             type_user = new JComboBox<>(new String[]{"Usuarios dados de baja", "Usuarios activos"});
             type_user.setSelectedIndex(1);
-            type_user.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent event) {
-                    if (event.getStateChange() == ItemEvent.SELECTED)
-                        access.typeuser = type_user.getSelectedIndex();
-                }
+            type_user.addItemListener((ItemEvent event) -> {
+                if (event.getStateChange() == ItemEvent.SELECTED)
+                    access.typeuser = type_user.getSelectedIndex();
             });
             hgroup.addComponent(type_user);
             vgroupinput.addComponent(type_user, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE);
@@ -109,51 +106,41 @@ public class SearchUser extends JPanel {
         layout.setVerticalGroup(vgroupinput.addComponent(scroll));
         
         //Manejadores de eventos
-        buttonall.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                switch (type_selection) {
-                    case 0:
-                        printall(); //Todos
-                        break;
-                    case 1:
-                        print_personal(access.selects(0)); //Admins
-                        break;
-                    case 2:
-                        print_personal(access.selects(1)); //Personal
-                        break;
-                    case 3:
-                        print_student(access.selects(2)); //Alumnos
-                }
-                
+        buttonall.addActionListener((ActionEvent event) -> {
+            switch (type_selection) {
+                case 0:
+                    printall(); //Todos
+                    break;
+                case 1:
+                    print_personal(access.selects(0)); //Admins
+                    break;
+                case 2:
+                    print_personal(access.selects(1)); //Personal
+                    break;
+                case 3:
+                    print_student(access.selects(2)); //Alumnos
             }
         });
-        checkopt.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent event) {
-                if (event.getStateChange() == ItemEvent.SELECTED) {
-                    can_search = true;
-                    buttonall.setVisible(false);
-                    inputs[option_active].setVisible(true);
-                } else {
-                    can_search = false;
-                    buttonall.setVisible(true);
-                    inputs[option_active].setVisible(false);
-                    inputs[option_active].field.setText("");
-                }
+        checkopt.addItemListener((ItemEvent event) -> {
+            if (event.getStateChange() == ItemEvent.SELECTED) {
+                can_search = true;
+                buttonall.setVisible(false);
+                inputs[option_active].setVisible(true);
+            } else {
+                can_search = false;
+                buttonall.setVisible(true);
+                inputs[option_active].setVisible(false);
+                inputs[option_active].field.setText("");
             }
         });
-        ItemListener listener_all_and_admin = new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent event) {
-                if (event.getStateChange() == ItemEvent.SELECTED) {
-                    type_selection = (event.getItemSelectable() == radiosselect[0] ? 0 : 1);
-                    if (checkopt.isVisible()) {
-                        checkopt.setVisible(false);
-                        checkopt.setSelected(false);
-                        for (int j = 0; j < radiosopt.length; j++)
-                            radiosopt[j].setVisible(false);
-                    }
+        ItemListener listener_all_and_admin = (ItemEvent event) -> {
+            if (event.getStateChange() == ItemEvent.SELECTED) {
+                type_selection = (event.getItemSelectable() == radiosselect[0] ? 0 : 1);
+                if (checkopt.isVisible()) {
+                    checkopt.setVisible(false);
+                    checkopt.setSelected(false);
+                    for (int j = 0; j < radiosopt.length; j++)
+                        radiosopt[j].setVisible(false);
                 }
             }
         };
@@ -163,24 +150,21 @@ public class SearchUser extends JPanel {
             radiosselect[1].setSelected(true);
             radiosselect[0].setVisible(false);
         }
-        ItemListener listener_personal_and_student = new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent event) {
-                if (event.getStateChange() == ItemEvent.SELECTED) {
-                    if (radiosselect[2] == event.getItemSelectable()) {
-                        type_selection = 2;
-                        radiosopt[2].setVisible(false);
-                        if (radiosopt[2].isSelected())
-                            radiosopt[0].setSelected(true);
-                    } else {
-                        type_selection = 3;
-                        radiosopt[2].setVisible(true);
-                    }
-                    if (!checkopt.isVisible()) {
-                        checkopt.setVisible(true);
-                        radiosopt[0].setVisible(true);
-                        radiosopt[1].setVisible(true);
-                    }
+        ItemListener listener_personal_and_student = (ItemEvent event) -> {
+            if (event.getStateChange() == ItemEvent.SELECTED) {
+                if (radiosselect[2] == event.getItemSelectable()) {
+                    type_selection = 2;
+                    radiosopt[2].setVisible(false);
+                    if (radiosopt[2].isSelected())
+                        radiosopt[0].setSelected(true);
+                } else {
+                    type_selection = 3;
+                    radiosopt[2].setVisible(true);
+                }
+                if (!checkopt.isVisible()) {
+                    checkopt.setVisible(true);
+                    radiosopt[0].setVisible(true);
+                    radiosopt[1].setVisible(true);
                 }
             }
         };

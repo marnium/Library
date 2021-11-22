@@ -29,30 +29,24 @@ public class ChangePassword extends JPanel {
 
         //Botón actualizar contraseña
         JButton button = new JButton("Cambiar Contraseña");
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                if (group.inputs[0].field.getText().isEmpty() || group.inputs[1].field.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(ChangePassword.this, "Rellena todos los campos", "Campos Vacíos",
+        button.addActionListener((ActionEvent event) -> {
+            if (group.inputs[0].field.getText().isEmpty() || group.inputs[1].field.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(ChangePassword.this, "Rellena todos los campos", "Campos Vacíos",
                         JOptionPane.ERROR_MESSAGE);
-                } else if (!access.is_password_correct(iduser, group.inputs[0].field.getText())) {
-                    JOptionPane.showMessageDialog(ChangePassword.this, "Contraseña actual incorrecta", "Estado",
+            } else if (!access.is_password_correct(iduser, group.inputs[0].field.getText())) {
+                JOptionPane.showMessageDialog(ChangePassword.this, "Contraseña actual incorrecta", "Estado",
                         JOptionPane.ERROR_MESSAGE);
-                } else if (access.update_passwordbyid(iduser, group.inputs[1].field.getText()) != 1) {
-                    JOptionPane.showMessageDialog(ChangePassword.this, "No se pudo modificar la contraseña", "Estado",
+            } else if (access.update_passwordbyid(iduser, group.inputs[1].field.getText()) != 1) {
+                JOptionPane.showMessageDialog(ChangePassword.this, "No se pudo modificar la contraseña", "Estado",
                         JOptionPane.ERROR_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(ChangePassword.this, "Contraseña Modificada");
-                }
+            } else {
+                JOptionPane.showMessageDialog(ChangePassword.this, "Contraseña Modificada");
             }
         });
         JButton button_clean = new JButton("Limpiar");
-        button_clean.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                group.inputs[0].field.setText("");
-                group.inputs[1].field.setText("");
-            }
+        button_clean.addActionListener((ActionEvent event) -> {
+            group.inputs[0].field.setText("");
+            group.inputs[1].field.setText("");
         });
 
         //Diseño de ChangePassword

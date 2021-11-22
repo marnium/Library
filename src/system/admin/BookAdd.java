@@ -41,32 +41,27 @@ public class BookAdd extends JPanel {
         //Crear el grupo de Inputs, el botón de insertar datos y el botón de limpiar campos
         create_group_inputs();
         JButton button_insert = new JButton("Agregar Libro");
-        button_insert.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean is_empty = false;
-                String values[] = new String[group_inputs.inputs.length];
-                for (int i = 0; i < group_inputs.inputs.length; i++) {
-                    values[i] = group_inputs.inputs[i].field.getText();
-                    if (values[i].isEmpty()) {
-                        is_empty = true;
-                        break;
-                    }
+        button_insert.addActionListener((ActionEvent e) -> {
+            boolean is_empty = false;
+            String values[] = new String[group_inputs.inputs.length];
+            for (int i = 0; i < group_inputs.inputs.length; i++) {
+                values[i] = group_inputs.inputs[i].field.getText();
+                if (values[i].isEmpty()) {
+                    is_empty = true;
+                    break;
                 }
-                if (is_empty) {
-                    JOptionPane.showMessageDialog(BookAdd.this, "Rellene todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
-                } else if (1 == access.insert_book(values)) {
-                    JOptionPane.showMessageDialog(BookAdd.this, "Agregado", "Estado", JOptionPane.INFORMATION_MESSAGE);
-                } else
-                    JOptionPane.showMessageDialog(BookAdd.this, "No agregado", "Estado", JOptionPane.ERROR_MESSAGE);
             }
+            if (is_empty) {
+                JOptionPane.showMessageDialog(BookAdd.this, "Rellene todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
+            } else if (1 == access.insert_book(values)) {
+                JOptionPane.showMessageDialog(BookAdd.this, "Agregado", "Estado", JOptionPane.INFORMATION_MESSAGE);
+            } else
+                JOptionPane.showMessageDialog(BookAdd.this, "No agregado", "Estado", JOptionPane.ERROR_MESSAGE);
         });
         JButton button_clean = new JButton("Limpiar");
-        button_clean.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for (int i = 0; i < group_inputs.inputs.length; i++)
-                    group_inputs.inputs[i].field.setText("");
+        button_clean.addActionListener((ActionEvent e) -> {
+            for (Input input : group_inputs.inputs) {
+                input.field.setText("");
             }
         });
 

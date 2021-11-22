@@ -31,30 +31,27 @@ public class Admin extends javax.swing.JFrame{
         // Crear y establecer menu
         create_menu();
         add(menu, BorderLayout.NORTH);
-        menu.add_menu_listener(new MenuListener(){
-            @Override
-            public void changed_item_enable(MenuEvent event) {
-                int index = event.get_index();
-                if (event.get_type_item() == MenuEvent.SUBMENU) {
-                    index += offset[index_item_active];
-                    if (index < 14) {
-                        layout.replace(panel_active, paneles[index]);
-                        panel_active = paneles[index];
-                    } else if (index == 14) {
-                        logout();
-                        system.login.Login login = new system.login.Login();
-                        login.setVisible(true);
-                        login.createAccess();
-                        dispose();
-                    } else {
-                        logout();
-                        System.exit(0);
-                    }
+        menu.add_menu_listener((MenuEvent event) -> {
+            int index = event.get_index();
+            if (event.get_type_item() == MenuEvent.SUBMENU) {
+                index += offset[index_item_active];
+                if (index < 14) {
+                    layout.replace(panel_active, paneles[index]);
+                    panel_active = paneles[index];
+                } else if (index == 14) {
+                    logout();
+                    system.login.Login login = new system.login.Login();
+                    login.setVisible(true);
+                    login.createAccess();
+                    dispose();
                 } else {
-                    layout.replace(panel_active, presentation[index]);
-                    panel_active = presentation[index];
-                    index_item_active = index;
+                    logout();
+                    System.exit(0);
                 }
+            } else {
+                layout.replace(panel_active, presentation[index]);
+                panel_active = presentation[index];
+                index_item_active = index;
             }
         });
 
@@ -117,9 +114,11 @@ public class Admin extends javax.swing.JFrame{
             .addComponent(panel_active));
 
         // Configurar ventana
-        setBounds(0, 0, Toolkit.getDefaultToolkit().getScreenSize().width,
-            Toolkit.getDefaultToolkit().getScreenSize().height);
+        setSize(Toolkit.getDefaultToolkit().getScreenSize().width - 50,
+            Toolkit.getDefaultToolkit().getScreenSize().height - 100);
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(600, 500));
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent event) {

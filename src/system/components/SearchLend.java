@@ -8,12 +8,12 @@ import java.sql.*;
 
 public class SearchLend extends JPanel {
     private static final long serialVersionUID = 1L;
-    private String[] columnsstd = {"Fecha Prestamo", "Fecha Devolución", "Núm. Control",
+    private final String[] columnsstd = {"Fecha Prestamo", "Fecha Devolución", "Núm. Control",
         "Nombre", "Apellido Paterno", "ID Libro", "Titulo", "Autor", "id_prestamo"};
     private JRadioButton radio_date;
     private InputDate date_init;
     private InputDate date_end;
-    private JTable table;
+    private final JTable table;
     private Access access;
     private SearchListener search_listener = null;
     private int offset = 0;
@@ -62,34 +62,31 @@ public class SearchLend extends JPanel {
                 .addComponent(button_select))
             .addComponent(scroll));
         
-        button_select.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                if (radio_date.isSelected()) {
-                    if (date_init.getCalendar() == null || date_end.getCalendar() == null) {
-                        JOptionPane.showMessageDialog(SearchLend.this, "Rellene todos los campos");
-                    } else if (date_init.getCalendar().compareTo(date_end.getCalendar()) > 0) {
-                        JOptionPane.showMessageDialog(SearchLend.this, "Fecha Inicial no puede ser mayor a Fecha Final");
-                    } else {
-                        Calendar ca = date_init.getCalendar();
-                        ca.set(Calendar.HOUR_OF_DAY, 0);
-                        ca.set(Calendar.MINUTE, 0);
-                        ca.set(Calendar.SECOND, 0);
-                        ca.set(Calendar.MILLISECOND, 0);
-                        Calendar cb = date_end.getCalendar();
-                        cb.set(Calendar.HOUR_OF_DAY, 18);
-                        cb.set(Calendar.MINUTE, 59);
-                        cb.set(Calendar.SECOND, 59);
-                        cb.set(Calendar.MILLISECOND, 0);
-                        Timestamp a = Timestamp.from(ca.toInstant());
-                        Timestamp b = Timestamp.from(cb.toInstant());
-                        print_table(access.selectsbydate(0 + offset, a, b, type_select),
+        button_select.addActionListener((ActionEvent event) -> {
+            if (radio_date.isSelected()) {
+                if (date_init.getCalendar() == null || date_end.getCalendar() == null) {
+                    JOptionPane.showMessageDialog(SearchLend.this, "Rellene todos los campos");
+                } else if (date_init.getCalendar().compareTo(date_end.getCalendar()) > 0) {
+                    JOptionPane.showMessageDialog(SearchLend.this, "Fecha Inicial no puede ser mayor a Fecha Final");
+                } else {
+                    Calendar ca = date_init.getCalendar();
+                    ca.set(Calendar.HOUR_OF_DAY, 0);
+                    ca.set(Calendar.MINUTE, 0);
+                    ca.set(Calendar.SECOND, 0);
+                    ca.set(Calendar.MILLISECOND, 0);
+                    Calendar cb = date_end.getCalendar();
+                    cb.set(Calendar.HOUR_OF_DAY, 18);
+                    cb.set(Calendar.MINUTE, 59);
+                    cb.set(Calendar.SECOND, 59);
+                    cb.set(Calendar.MILLISECOND, 0);
+                    Timestamp a = Timestamp.from(ca.toInstant());
+                    Timestamp b = Timestamp.from(cb.toInstant());
+                    print_table(access.selectsbydate(0 + offset, a, b, type_select),
                             access.selectsbydate(1 + offset, a, b, type_select));
-                    }
-                } else
-                    print_table(access.selects(0 + offset, type_select),
+                }
+            } else
+                print_table(access.selects(0 + offset, type_select),
                         access.selects(1 + offset, type_select));
-            }
         });
     }
 

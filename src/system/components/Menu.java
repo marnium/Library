@@ -19,7 +19,7 @@ public class Menu extends JPanel {
     private ItemMenu item_menu_enable;
     private ItemSubmenu item_submenu_enable;
     private MenuListener listener = null;
-    private MenuEvent event = new MenuEvent();
+    private final MenuEvent event = new MenuEvent();
 
     public Menu(Images images, NameItems name_items) {
         super(new BorderLayout());
@@ -42,8 +42,9 @@ public class Menu extends JPanel {
         panel_submenu.setBackground(submenu_disable);
         for (ItemMenu im : items_menu) {
             panel_menu.add(im);
-            for (ItemSubmenu is : im.items_submenu)
+            im.items_submenu.forEach((is) -> {
                 panel_submenu.add(is);
+            });
         }
         add(panel_menu, BorderLayout.NORTH);
         add(panel_submenu, BorderLayout.CENTER);
@@ -136,14 +137,15 @@ public class Menu extends JPanel {
         // Agregar eventos a los items de menu y submenu
         for (ItemMenu im : items_menu) {
             im.addMouseListener(msl_menu);
-            for (ItemSubmenu is : im.items_submenu)
+            im.items_submenu.forEach((is) -> {
                 is.addMouseListener(msl_submenu);
+            });
         }
     }
 
     private class ItemMenu extends JLabel {
         private static final long serialVersionUID = 1L;
-        private ArrayList<ItemSubmenu> items_submenu = new ArrayList<ItemSubmenu>();
+        private ArrayList<ItemSubmenu> items_submenu = new ArrayList<>();
         private boolean is_enable;
         public final int index;
 
@@ -167,18 +169,23 @@ public class Menu extends JPanel {
             }
         }
 
+        @Override
         public void enable() {
-            for (ItemSubmenu ism : items_submenu)
+            items_submenu.forEach((ism) -> {
                 ism.setVisible(true);
+            });
             setBackground(menu_enable);
             is_enable = true;
         }
 
+        @Override
         public void disable() {
-            for (ItemSubmenu ism : items_submenu) {
+            items_submenu.stream().map((ism) -> {
                 ism.setVisible(false);
+                return ism;
+            }).forEachOrdered((ism) -> {
                 ism.disable();
-            }
+            });
             setBackground(menu_disable);
             is_enable = false;
         }
@@ -203,11 +210,13 @@ public class Menu extends JPanel {
             if (imi != null) setIcon(imi);
         }
 
+        @Override
         public void enable() {
             setBackground(submenu_enable);
             is_enable = true;
         }
 
+        @Override
         public void disable() {
             setBackground(submenu_disable);
             is_enable = false;
@@ -227,7 +236,7 @@ public class Menu extends JPanel {
 
     public static class Images {
         public final ImageIcon menu[];
-        public final ArrayList<ImageIcon[]> submenu = new ArrayList<ImageIcon[]>();
+        public final ArrayList<ImageIcon[]> submenu = new ArrayList<>();
     
         public Images(String[] path_menu, String path_submenu[][]) {
             // Imagenes del Menu
@@ -241,8 +250,7 @@ public class Menu extends JPanel {
     
             // Imagenes de los submenus
             if (path_submenu != null) {
-                for (int i = 0; i < path_submenu.length; i++) {
-                    String[] path = path_submenu[i];
+                for (String[] path : path_submenu) {
                     ImageIcon[] imi = null;
                     if (path != null && path.length > 0) {
                         imi = new ImageIcon[path.length];

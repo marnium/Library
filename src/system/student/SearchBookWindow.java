@@ -27,26 +27,22 @@ public class SearchBookWindow extends JFrame {
         this.id_login = id_login;
         // Crear menu
         Menu menu = create_menu();
-        menu.add_menu_listener(new MenuListener(){
-        
-            @Override
-            public void changed_item_enable(MenuEvent event) {
-                if (event.get_type_item() == MenuEvent.MENU) {
-                    int index = event.get_index();
-                    if (index < 3) {
-                        layout.replace(panel_active, paneles[index]);
-                        panel_active = paneles[index];
-                        index_panel_active = index;
-                    } else if (index == 3) {
-                        logout();
-                        system.login.Login login = new system.login.Login();
-                        login.setVisible(true);
-                        login.createAccess();
-                        dispose();
-                    } else {
-                        logout();
-                        System.exit(0);
-                    }
+        menu.add_menu_listener((MenuEvent event) -> {
+            if (event.get_type_item() == MenuEvent.MENU) {
+                int index = event.get_index();
+                if (index < 3) {
+                    layout.replace(panel_active, paneles[index]);
+                    panel_active = paneles[index];
+                    index_panel_active = index;
+                } else if (index == 3) {
+                    logout();
+                    system.login.Login login = new system.login.Login();
+                    login.setVisible(true);
+                    login.createAccess();
+                    dispose();
+                } else {
+                    logout();
+                    System.exit(0);
                 }
             }
         });
@@ -78,9 +74,11 @@ public class SearchBookWindow extends JFrame {
         add(mainpanel, BorderLayout.CENTER);
 
         // Configurar ventana
-        setBounds(0, 0, Toolkit.getDefaultToolkit().getScreenSize().width,
-            Toolkit.getDefaultToolkit().getScreenSize().height);
+        setSize(Toolkit.getDefaultToolkit().getScreenSize().width - 50,
+            Toolkit.getDefaultToolkit().getScreenSize().height - 100);
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(600, 500));
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent event) {

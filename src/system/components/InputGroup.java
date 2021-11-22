@@ -31,16 +31,17 @@ public class InputGroup extends javax.swing.JPanel {
         // Diseñar el grupo
         // Grupo Horizontal -> Se ajustan a la longitud del comopente de mayor longitud
         GroupLayout.ParallelGroup hgroup = layout.createParallelGroup();
-        for (int i = 0; i < inputs.length; i++)
-            hgroup.addComponent(inputs[i]);
+        for (Input input : inputs) {
+            hgroup.addComponent(input);
+        }
         layout.setHorizontalGroup(hgroup);
 
         // Grupo vertical -> La altura variable, pero el objeto Input impide el cambio
         // Se agrega un espacio de 4 a 12 entre cada input
         GroupLayout.SequentialGroup vgroup = layout.createSequentialGroup();
-        for (int i = 0; i < inputs.length; i++)
-            vgroup.addComponent(inputs[i])
-            .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 4, 12);
+        for (Input input : inputs) {
+            vgroup.addComponent(input).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 4, 12);
+        }
         layout.setVerticalGroup(vgroup);
     }
 }

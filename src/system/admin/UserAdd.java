@@ -11,8 +11,8 @@ import java.sql.*;
 
 public class UserAdd extends JPanel {
     private static final long serialVersionUID = 1L;
-    private Access access;
-    private JRadioButton[] type_users;
+    private final Access access;
+    private final JRadioButton[] type_users;
     private InputGroup inputs_data;
     private InputGroup inputs_account;
     private JCheckBox checkadmin;
@@ -43,22 +43,17 @@ public class UserAdd extends JPanel {
 
         // Crear el button de agregar usuario
         JButton button_adduser = new JButton("Agregar Usuario");
-        button_adduser.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                validate_and_inseruser();
-            }
+        button_adduser.addActionListener((ActionEvent e) -> {
+            validate_and_inseruser();
         });
         JButton button_clean = new JButton("Limpiar");
-        button_clean.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for (int i = 0; i < inputs_data.inputs.length; i++)
-                    inputs_data.inputs[i].field.setText("");
-                inputs_account.inputs[0].field.setText("");
-                inputs_account.inputs[1].field.setText("");
-                checkadmin.setSelected(false);
+        button_clean.addActionListener((ActionEvent e) -> {
+            for (Input input : inputs_data.inputs) {
+                input.field.setText("");
             }
+            inputs_account.inputs[0].field.setText("");
+            inputs_account.inputs[1].field.setText("");
+            checkadmin.setSelected(false);
         });
 
         //Crear los radiobutton para manejar los tipos de usuarios
@@ -124,7 +119,7 @@ public class UserAdd extends JPanel {
                 break;
             }
         }
-        is_empty = (account[0].isEmpty() ? true : account[1].isEmpty() ? true : false);
+        is_empty = (account[0].isEmpty() ? true : account[1].isEmpty());
         if (is_empty) {
             JOptionPane.showMessageDialog(UserAdd.this, "Rellene todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
         } else if (access.exists_user(account[0]) != 0) {

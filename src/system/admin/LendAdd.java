@@ -20,9 +20,9 @@ public class LendAdd extends JPanel {
     private static final long serialVersionUID = 1L;
     private final String[] name_columns_book = {"ID", "Titulo", "Autor", "Año Publ.", "Editorial", "País",
         "Ciudad", "ISBN", "Ejemp.", "activo"};
-    private String[] name_columns_user = { "Núm. Control", "Nombre", "Apellido Paterno", "Apellido Materno",
+    private final String[] name_columns_user = { "Núm. Control", "Nombre", "Apellido Paterno", "Apellido Materno",
         "Núm. Tel.", "Dirección", "E-Mail" };
-    private Frame owner;
+    private final Frame owner;
     private Input input_idlibro;
     private Input input_user;
     private InputDate timelend;
@@ -30,7 +30,7 @@ public class LendAdd extends JPanel {
     private JLabel action_searchbook;
     private JLabel action_showbook;
     private JLabel action_showuser;
-    private ImageIcon images[] = new ImageIcon[2];
+    private final ImageIcon images[] = new ImageIcon[2];
     private Access access;
     private JScrollPane scroll_book;
     private JTable table_book;
@@ -64,68 +64,62 @@ public class LendAdd extends JPanel {
 
         // Botón prestar libro y Botón limpiar campos
         JButton button = new JButton("Prestar Libro");
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                if (input_idlibro.field.getText().isEmpty() || input_user.field.getText().isEmpty()
-                        || timelend.getCalendar() == null || input_observations.field.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(LendAdd.this, "Rellena Todos Los Campos", "Error",
+        button.addActionListener((ActionEvent event) -> {
+            if (input_idlibro.field.getText().isEmpty() || input_user.field.getText().isEmpty()
+                    || timelend.getCalendar() == null || input_observations.field.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(LendAdd.this, "Rellena Todos Los Campos", "Error",
                         JOptionPane.ERROR_MESSAGE);
-                } else {
-                    ResultSet result_book = access.select_book(input_idlibro.field.getText());
-                    try {
-                        if (!result_book.next()) {
-                            JOptionPane.showMessageDialog(LendAdd.this, "Libro No Registrado", "Error",
+            } else {
+                ResultSet result_book = access.select_book(input_idlibro.field.getText());
+                try {
+                    if (!result_book.next()) {
+                        JOptionPane.showMessageDialog(LendAdd.this, "Libro No Registrado", "Error",
                                 JOptionPane.ERROR_MESSAGE);
-                        } else if (result_book.getInt(10) == 0) {
-                            JOptionPane.showMessageDialog(LendAdd.this, "Este Libro fue dado de baja",
+                    } else if (result_book.getInt(10) == 0) {
+                        JOptionPane.showMessageDialog(LendAdd.this, "Este Libro fue dado de baja",
                                 "Estado", JOptionPane.WARNING_MESSAGE);
-                        } else if (result_book.getInt(9) < 1) {
-                            JOptionPane.showMessageDialog(LendAdd.this, "No Hay Ejemplares Diponibles", "Error",
+                    } else if (result_book.getInt(9) < 1) {
+                        JOptionPane.showMessageDialog(LendAdd.this, "No Hay Ejemplares Diponibles", "Error",
                                 JOptionPane.ERROR_MESSAGE);
-                        } else {
-                            ResultSet result = access.select_user(input_user.field.getText());
-                            if (!result.first()) {
-                                JOptionPane.showMessageDialog(LendAdd.this, "Usuario No Registrado", "Error",
+                    } else {
+                        ResultSet result = access.select_user(input_user.field.getText());
+                        if (!result.first()) {
+                            JOptionPane.showMessageDialog(LendAdd.this, "Usuario No Registrado", "Error",
                                     JOptionPane.ERROR_MESSAGE);
-                            } else if (result.getInt(5) == 0) {
-                                JOptionPane.showMessageDialog(LendAdd.this, "Este Usuario fue dado de baja",
+                        } else if (result.getInt(5) == 0) {
+                            JOptionPane.showMessageDialog(LendAdd.this, "Este Usuario fue dado de baja",
                                     "Estado", JOptionPane.WARNING_MESSAGE);
-                            } else if (timelend.getCalendar().compareTo(Calendar.getInstance()) > 0) {
-                                Calendar ca = timelend.getCalendar();
-                                ca.set(Calendar.HOUR_OF_DAY, 18);
-                                ca.set(Calendar.MINUTE, 59);
-                                ca.set(Calendar.SECOND, 59);
-                                ca.set(Calendar.MILLISECOND, 0);
-                                String values[] = { result_book.getString(1), result.getString(1),
-                                        input_observations.field.getText() };
-                                if (1 == access.insert_lend(values, Timestamp.from(ca.toInstant())))
-                                    JOptionPane.showMessageDialog(LendAdd.this, "Hecho: Prestamo Registrado", "Estado",
-                                            JOptionPane.INFORMATION_MESSAGE);
-                                else
-                                    JOptionPane.showMessageDialog(LendAdd.this, "Error al Registrar el Prestamo", "Estado",
-                                            JOptionPane.ERROR_MESSAGE);
-                            } else {
-                                JOptionPane.showMessageDialog(LendAdd.this, "El Tiempo Mínimo de Prestamo es de 1 Día",
-                                        "Error", JOptionPane.ERROR_MESSAGE);
-                            }
+                        } else if (timelend.getCalendar().compareTo(Calendar.getInstance()) > 0) {
+                            Calendar ca = timelend.getCalendar();
+                            ca.set(Calendar.HOUR_OF_DAY, 18);
+                            ca.set(Calendar.MINUTE, 59);
+                            ca.set(Calendar.SECOND, 59);
+                            ca.set(Calendar.MILLISECOND, 0);
+                            String values[] = { result_book.getString(1), result.getString(1),
+                                input_observations.field.getText() };
+                            if (1 == access.insert_lend(values, Timestamp.from(ca.toInstant())))
+                                JOptionPane.showMessageDialog(LendAdd.this, "Hecho: Prestamo Registrado", "Estado",
+                                        JOptionPane.INFORMATION_MESSAGE);
+                            else
+                                JOptionPane.showMessageDialog(LendAdd.this, "Error al Registrar el Prestamo", "Estado",
+                                        JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            JOptionPane.showMessageDialog(LendAdd.this, "El Tiempo Mínimo de Prestamo es de 1 Día",
+                                    "Error", JOptionPane.ERROR_MESSAGE);
                         }
-                    } catch (SQLException e) {
-                        e.printStackTrace();
                     }
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
         });
         JButton button_clean = new JButton("Limpiar");
-        button_clean.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                user_current = "";
-                input_idlibro.field.setText("");
-                input_user.field.setText("");
-                timelend.cleanField();
-                input_observations.field.setText("");
-            }
+        button_clean.addActionListener((ActionEvent e) -> {
+            user_current = "";
+            input_idlibro.field.setText("");
+            input_user.field.setText("");
+            timelend.cleanField();
+            input_observations.field.setText("");
         });
 
         // Diseño del panel principal
@@ -155,9 +149,8 @@ public class LendAdd extends JPanel {
 
         // Input id libro y la acción mostrar información del libro
         input_idlibro = new InputText(null, "Libro (Titulo o Código de Barras)", 20, 80);
-        ((FieldText)input_idlibro.field).addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {show_databook();}
+        ((FieldText)input_idlibro.field).addActionListener((ActionEvent event) -> {
+            show_databook();
         });
         action_showbook = new JLabel("Mostrar Información del Libro", images[0], SwingConstants.LEFT);
         action_showbook.addMouseListener(new MouseAdapter() {
@@ -185,7 +178,8 @@ public class LendAdd extends JPanel {
             SwingConstants.RIGHT);
         action_searchbook.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {new SearchBookWindow(owner);}
+            public void mouseClicked(MouseEvent e) {SearchBookWindow searchBookWindow = new SearchBookWindow(owner);
+}
 
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -363,10 +357,10 @@ public class LendAdd extends JPanel {
 
     private class SearchBookWindow extends JDialog {
         private static final long serialVersionUID = 1L;
-        private JTable table;
+        private final JTable table;
         private String title_selected;
-        private JLabel label;
-        private JButton button;
+        private final JLabel label;
+        private final JButton button;
     
         public SearchBookWindow(Frame owner) {
             super(owner, "Seleccionar Libro");
@@ -412,25 +406,18 @@ public class LendAdd extends JPanel {
         }
 
         private void set_listener_components() {
-            button.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    input_idlibro.field.setText(title_selected);
-                    dispose();
-                }
+            button.addActionListener((ActionEvent e) -> {
+                input_idlibro.field.setText(title_selected);
+                dispose();
             });
-            table.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-        
-                @Override
-                public void valueChanged(ListSelectionEvent arg0) {
-                    if (table.getSelectedRow() < 0) {
-                        label.setText("Libro Seleccionado:");
-                        button.setVisible(false);
-                    } else {
-                        title_selected = table.getValueAt(table.getSelectedRow(), 0).toString();
-                        label.setText("Libro Seleccionado: " + title_selected);
-                        button.setVisible(true);
-                    }
+            table.getSelectionModel().addListSelectionListener((ListSelectionEvent arg0) -> {
+                if (table.getSelectedRow() < 0) {
+                    label.setText("Libro Seleccionado:");
+                    button.setVisible(false);
+                } else {
+                    title_selected = table.getValueAt(table.getSelectedRow(), 0).toString();
+                    label.setText("Libro Seleccionado: " + title_selected);
+                    button.setVisible(true);
                 }
             });
         }

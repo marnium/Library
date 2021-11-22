@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.Color;
 import java.awt.Frame;
 import java.util.Calendar;
@@ -178,7 +177,7 @@ public class LendAdd extends JPanel {
             SwingConstants.RIGHT);
         action_searchbook.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {SearchBookWindow searchBookWindow = new SearchBookWindow(owner);
+            public void mouseClicked(MouseEvent e) {new SearchBookWindow(owner);
 }
 
             @Override
